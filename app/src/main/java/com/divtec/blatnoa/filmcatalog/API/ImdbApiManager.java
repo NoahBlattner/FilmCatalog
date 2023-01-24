@@ -6,7 +6,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.divtec.blatnoa.filmcatalog.API.ApiObjects.ApiObjectBuilder;
 import com.divtec.blatnoa.filmcatalog.API.ApiObjects.Movie;
@@ -15,10 +15,10 @@ import com.divtec.blatnoa.filmcatalog.API.Exceptions.ApiError404Exception;
 import com.divtec.blatnoa.filmcatalog.API.Exceptions.ApiError408Exception;
 import com.divtec.blatnoa.filmcatalog.API.Exceptions.ApiErrorException;
 import com.divtec.blatnoa.filmcatalog.API.Exceptions.UnknownApiErrorException;
-import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -43,22 +43,39 @@ public class ImdbApiManager {
         this.language = language;
     }
 
-    public ArrayList<Movie> getMovies() throws ApiError401Exception, ApiError404Exception, UnknownApiErrorException, ApiError408Exception {
-        String url = getFullUrl("SearchMovie", "");
+    /**
+     * Loads the top 250 movies from Imdb APi
+     * @param onLoadedAction The action to be executed when the movies are loaded
+     * @throws ApiError401Exception If the api key is invalid
+     * @throws ApiError404Exception If the api path is not found
+     * @throws UnknownApiErrorException If the api returns an unknown error
+     * @throws ApiError408Exception If the api request timed out
+     */
+    public void loadTop250Movies(OnLoadedAction onLoadedAction) throws ApiError401Exception, ApiError404Exception, UnknownApiErrorException, ApiError408Exception {
+        String url = getFullUrl("Top250Movies", "");
         ArrayList<Movie> movies = new ArrayList<>();
 
-        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null,
-                new Response.Listener<JSONArray>() {
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONObject>() {
                     @Override
-                    public void onResponse(JSONArray response) {
-                        // TODO: Parse response
-                        for (int i = 0; i < response.length(); i++) {
-                            try {
-                                Movie movie = ApiObjectBuilder.fromJson(response.getJSONObject(i).toString(), Movie.class);
-                                movies.add(movie);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
+                    public void onResponse(JSONObject response) {
+                        try {
+                            // Get the JSON array
+                            JSONArray moviesJson = response.getJSONArray("items");
+
+                            for (int i = 0; i < moviesJson.length(); i++) {
+                                try {
+                                    // Convert each JSON object to a Movie object and add it to the list
+                                    Movie movie = ApiObjectBuilder.fromJson(moviesJson.getJSONObject(i).toString(), Movie.class);
+                                    movies.add(movie);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
                             }
+                            // Execute the action
+                            onLoadedAction.onLoaded(movies);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
                     }
                 }, new Response.ErrorListener() {
@@ -68,10 +85,20 @@ public class ImdbApiManager {
                     }
                 });
 
-        return movies;
+        // Add the request to the queue
+        queue.add(request);
     }
 
+    /**
+     * Handle an error from the api
+     * @param error The error
+     * @param url The url that caused the error
+     */
     private void handleError(VolleyError error, String url) throws ApiErrorException {
+        if (error.networkResponse == null) {
+            throw new UnknownApiErrorException(url);
+        }
+
         switch (error.networkResponse.statusCode) {
             case 401:
                 throw new ApiError401Exception(url);
@@ -85,8 +112,17 @@ public class ImdbApiManager {
     }
 
     private String getFullUrl(String action, String parameters) {
+        // Remove slashes from action and parameters
         action = action.replace("/", "");
-        return baseUrl + language + "/" + action + "/" + apiKey + "/" + parameters;
+        parameters = parameters.replace("/", "");
+
+        // Build url
+        String url = baseUrl + language + "/API/" + action + "/" + apiKey;
+        if (!parameters.isEmpty()) {
+            url += "/" + parameters;
+        }
+
+        return url;
     }
 
     /*
