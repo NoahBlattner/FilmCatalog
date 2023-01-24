@@ -1,4 +1,4 @@
-package com.divtec.blatnoa.filmcatalog.API;
+package com.divtec.blatnoa.filmcatalog.API.Exceptions;
 
 public class ApiError404Exception extends ApiErrorException {
     public ApiError404Exception(String url) {

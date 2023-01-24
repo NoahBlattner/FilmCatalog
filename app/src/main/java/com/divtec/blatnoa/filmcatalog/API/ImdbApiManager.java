@@ -8,8 +8,17 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
+import com.divtec.blatnoa.filmcatalog.API.ApiObjects.ApiObjectBuilder;
+import com.divtec.blatnoa.filmcatalog.API.ApiObjects.Movie;
+import com.divtec.blatnoa.filmcatalog.API.Exceptions.ApiError401Exception;
+import com.divtec.blatnoa.filmcatalog.API.Exceptions.ApiError404Exception;
+import com.divtec.blatnoa.filmcatalog.API.Exceptions.ApiError408Exception;
+import com.divtec.blatnoa.filmcatalog.API.Exceptions.ApiErrorException;
+import com.divtec.blatnoa.filmcatalog.API.Exceptions.UnknownApiErrorException;
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.util.ArrayList;
 
@@ -34,14 +43,23 @@ public class ImdbApiManager {
         this.language = language;
     }
 
-    public ArrayList<Movie> getMovies() throws ApiError401Exception, ApiError404Exception, UnknownApiErrorException, ApiError408Exception{
+    public ArrayList<Movie> getMovies() throws ApiError401Exception, ApiError404Exception, UnknownApiErrorException, ApiError408Exception {
         String url = getFullUrl("SearchMovie", "");
+        ArrayList<Movie> movies = new ArrayList<>();
+
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
                         // TODO: Parse response
-                        String json = response.toString();
+                        for (int i = 0; i < response.length(); i++) {
+                            try {
+                                Movie movie = ApiObjectBuilder.fromJson(response.getJSONObject(i).toString(), Movie.class);
+                                movies.add(movie);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
                     }
                 }, new Response.ErrorListener() {
                     @Override
@@ -50,7 +68,7 @@ public class ImdbApiManager {
                     }
                 });
 
-        return null;
+        return movies;
     }
 
     private void handleError(VolleyError error, String url) throws ApiErrorException {

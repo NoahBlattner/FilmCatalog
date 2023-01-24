@@ -5,7 +5,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.divtec.blatnoa.filmcatalog.API.Movie;
+import com.divtec.blatnoa.filmcatalog.API.ApiObjects.Movie;
 
 import java.util.ArrayList;
 
