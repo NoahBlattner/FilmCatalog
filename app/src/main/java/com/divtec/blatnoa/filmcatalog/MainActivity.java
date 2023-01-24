@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Try to load the top 250 movies
         try {
-            imdbApiManager.loadTop250Movies(new OnLoadedAction() {
+            imdbApiManager.loadMovies(new OnLoadedAction() {
                 @Override
                 public void onLoaded(Object result) {
                     // Get the list of movies

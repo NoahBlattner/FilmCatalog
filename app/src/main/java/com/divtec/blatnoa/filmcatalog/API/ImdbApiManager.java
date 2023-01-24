@@ -51,9 +51,9 @@ public class ImdbApiManager {
      * @throws UnknownApiErrorException If the api returns an unknown error
      * @throws ApiError408Exception If the api request timed out
      */
-    public void loadTop250Movies(OnLoadedAction onLoadedAction) throws ApiError401Exception, ApiError404Exception, UnknownApiErrorException, ApiError408Exception {
-        String url = getFullUrl("Top250Movies", "");
-        ArrayList<Movie> movies = new ArrayList<>();
+    public void loadMovies(OnLoadedAction onLoadedAction) throws ApiError401Exception, ApiError404Exception, UnknownApiErrorException, ApiError408Exception {
+        String url = getFullUrl("SearchMovie", "");
+        // TODO find right action to get x movies
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {
@@ -62,6 +62,7 @@ public class ImdbApiManager {
                         try {
                             // Get the JSON array
                             JSONArray moviesJson = response.getJSONArray("items");
+                            ArrayList<Movie> movies = new ArrayList<>();
 
                             for (int i = 0; i < moviesJson.length(); i++) {
                                 try {

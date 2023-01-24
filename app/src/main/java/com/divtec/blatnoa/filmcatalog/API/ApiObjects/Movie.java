@@ -8,7 +8,20 @@ public class Movie extends ApiObject {
     public String Title;
     public String Description;
 
-    protected Movie() {
+    /**
+     * Constructor for Movie, accessible only from package -> ApiObjectBuilder
+     * @param id
+     * @param resultType
+     * @param image
+     * @param title
+     * @param description
+     */
+    protected Movie(String id, String resultType, String image, String title, String description) {
+        Id = id;
+        ResultType = resultType;
+        Image = image;
+        Title = title;
+        Description = description;
     }
 
     public String getId() {
