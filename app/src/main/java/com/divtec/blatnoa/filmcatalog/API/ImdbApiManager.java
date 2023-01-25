@@ -2,19 +2,25 @@ package com.divtec.blatnoa.filmcatalog.API;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
+
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.divtec.blatnoa.filmcatalog.API.ApiObjects.ApiKeyInfo;
+import com.divtec.blatnoa.filmcatalog.API.ApiObjects.ImdbApiObject;
 import com.divtec.blatnoa.filmcatalog.API.ApiObjects.ApiObjectBuilder;
+import com.divtec.blatnoa.filmcatalog.API.ApiObjects.SearchResult;
 import com.divtec.blatnoa.filmcatalog.API.ApiObjects.Top250MovieResult;
 import com.divtec.blatnoa.filmcatalog.API.Exceptions.ApiError401Exception;
 import com.divtec.blatnoa.filmcatalog.API.Exceptions.ApiError404Exception;
 import com.divtec.blatnoa.filmcatalog.API.Exceptions.ApiError408Exception;
 import com.divtec.blatnoa.filmcatalog.API.Exceptions.ApiErrorException;
 import com.divtec.blatnoa.filmcatalog.API.Exceptions.UnknownApiErrorException;
+import com.google.gson.JsonSyntaxException;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -43,6 +49,37 @@ public class ImdbApiManager {
         this.language = language;
     }
 
+    /*
+    * API Methods
+     */
+
+    public void loadApiKeyInfo(OnLoadedAction onLoadedAction) {
+        String url = getFullUrl("Usage", "");
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            // Build the object
+                            ApiKeyInfo keyInfo = ApiObjectBuilder.fromJson(response.toString(), ApiKeyInfo.class);
+                            // Execute the action
+                            onLoadedAction.onLoaded(keyInfo);
+                        } catch (JsonSyntaxException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                handleError(error, url);
+            }
+        });
+
+        // Add the request to the queue
+        queue.add(request);
+    }
+
     /**
      * Loads the top 250 movies from Imdb APi
      * @param onLoadedAction The action to be executed when the movies are loaded
@@ -61,17 +98,10 @@ public class ImdbApiManager {
                         try {
                             // Get the JSON array
                             JSONArray moviesJson = response.getJSONArray("items");
-                            ArrayList<Top250MovieResult> movies = new ArrayList<>();
 
-                            for (int i = 0; i < moviesJson.length(); i++) {
-                                try {
-                                    // Convert each JSON object to a Movie object and add it to the list
-                                    Top250MovieResult movie = ApiObjectBuilder.fromJson(moviesJson.getJSONObject(i).toString(), Top250MovieResult.class);
-                                    movies.add(movie);
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                            }
+                            // Convert the JSON array to an ArrayList of Movie objects
+                            ArrayList<Top250MovieResult> movies = jsonArrayToArrayList(moviesJson, Top250MovieResult.class);
+
                             // Execute the action
                             onLoadedAction.onLoaded(movies);
                         } catch (JSONException e) {
@@ -87,6 +117,62 @@ public class ImdbApiManager {
 
         // Add the request to the queue
         queue.add(request);
+    }
+
+    public void loadMovies(String filter, OnLoadedAction onLoadedAction) {
+        String url = getFullUrl("SearchMovie", filter);
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            // Get the JSON array
+                            JSONArray moviesJson = response.getJSONArray("results");
+
+                            // Convert the JSON array to an ArrayList of Movie objects
+                            ArrayList<SearchResult> movies = jsonArrayToArrayList(moviesJson, SearchResult.class);
+
+                            // Execute the action
+                            onLoadedAction.onLoaded(movies);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        handleError(error, url);
+                    }
+                });
+
+        queue.add(request);
+    }
+
+    /*
+     * Utility functions
+     */
+    /**
+     * Converts a JSON array to an ArrayList of ApiObjects
+     * @param jsonArray The JSON array
+     * @param arrayType The type of the array
+     * @param <T> The type of the array
+     * @return The ArrayList of type T with the converted JSON objects
+     */
+    @NonNull
+    private <T extends ImdbApiObject> ArrayList<T> jsonArrayToArrayList(JSONArray jsonArray, Class<T> arrayType) {
+        ArrayList<T> movies = new ArrayList<>();
+
+        for (int i = 0; i < jsonArray.length(); i++) {
+            try {
+                // Convert each JSON object to a Movie object and add it to the list
+                T arrayElement = ApiObjectBuilder.fromJson(jsonArray.getJSONObject(i).toString(), arrayType);
+                movies.add(arrayElement);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return movies;
     }
 
     /**

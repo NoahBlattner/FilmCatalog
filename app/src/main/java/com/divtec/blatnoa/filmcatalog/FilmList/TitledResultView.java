@@ -39,6 +39,10 @@ public class TitledResultView extends RecyclerView.ViewHolder {
      * @param url The url of the image
      */
     public void setPosterImage(String url) {
+        // Check if the url is valid
+        if (url == null || url.isEmpty())
+            return;
+
         Picasso.get().load(url).resize(400, 600).into(resultImage);
     }
 }

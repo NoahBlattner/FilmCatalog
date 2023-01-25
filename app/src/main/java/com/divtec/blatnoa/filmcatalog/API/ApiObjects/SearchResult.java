@@ -15,13 +15,8 @@ public class SearchResult extends TitledResult {
      */
     protected SearchResult(String id, String resultType, String image, String title, String description) {
         super(id, title, image);
-        Id = id;
         ResultType = resultType;
         Description = description;
-    }
-
-    public String getId() {
-        return Id;
     }
 
     public String getResultType() {

@@ -20,18 +20,6 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultView> 
         this.searchResultList = filmList;
     }
 
-    public void addFilm(SearchResult film) {
-        searchResultList.add(film);
-    }
-
-    public void removeFilm(SearchResult film) {
-        searchResultList.remove(film);
-    }
-
-    public void clearFilms() {
-        searchResultList.clear();
-    }
-
     @NonNull
     @Override
     public SearchResultView onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

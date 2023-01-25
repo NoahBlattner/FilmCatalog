@@ -2,11 +2,11 @@ package com.divtec.blatnoa.filmcatalog.API.ApiObjects;
 
 import com.google.gson.Gson;
 
-public abstract class ApiObject {
+public abstract class ImdbApiObject implements JsonConvertible {
 
     public String Id;
 
-    protected ApiObject(String id) {
+    protected ImdbApiObject(String id) {
         Id = id;
     }
 

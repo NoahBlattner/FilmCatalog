@@ -1,6 +1,6 @@
 package com.divtec.blatnoa.filmcatalog.API.ApiObjects;
 
-public class TitledResult extends ApiObject {
+public class TitledResult extends ImdbApiObject {
     private String title;
     private String image;
 
