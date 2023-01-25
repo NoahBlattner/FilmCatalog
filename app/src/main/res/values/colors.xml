@@ -8,10 +8,11 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <color name="colorPrimary">#08046C</color>
-    <color name="colorPrimaryVariant">#0C1140</color>
-    <color name="colorSecondary">#26065A</color>
-    <color name="colorSecondaryVariant">#180E3C</color>
+    <color name="colorPrimary">#262635</color>
+    <color name="colorPrimaryVariant">#252742</color>
+    <color name="colorSecondary">#5A0610</color>
+    <color name="colorSecondaryVariant">#3E070B</color>
+    <color name="transparent">#00000000</color>
     <color name="dark_grey">#FF222222</color>
     <color name="grey">#FF888888</color>
     <color name="light_grey">#FFCCCCCC</color>
