@@ -1,6 +1,6 @@
 package com.divtec.blatnoa.filmcatalog.API.ApiObjects;
 
-public class Top250Movie extends SearchResult {
+public class Top250MovieResult extends TitledResult {
 
     private String rank;
     private String fullTitle;
@@ -9,8 +9,8 @@ public class Top250Movie extends SearchResult {
     private String imDbRating;
     private String imDbRatingCount;
 
-    protected Top250Movie(String id, String resultType, String image, String title, String description, String rank, String fullTitle, String year, String crew, String imDbRating, String imDbRatingCount) {
-        super(id, resultType, image, title, description);
+    protected Top250MovieResult(String id, String rank, String title, String fullTitle, String year, String image, String crew, String imDbRating, String imDbRatingCount) {
+        super(id, title, image);
         this.rank = rank;
         this.fullTitle = fullTitle;
         this.year = year;
