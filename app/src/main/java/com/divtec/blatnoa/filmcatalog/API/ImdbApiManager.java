@@ -45,6 +45,10 @@ public class ImdbApiManager {
         this.language = language;
     }
 
+    /**
+     * Set the language to be used in the api requests
+     * @param language
+     */
     public void setLanguage(String language) {
         this.language = language;
     }
@@ -53,6 +57,10 @@ public class ImdbApiManager {
     * API Methods
      */
 
+    /**
+     * Loads the api key info
+     * @param onLoadedAction The action to be executed when the key info is loaded
+     */
     public void loadApiKeyInfo(OnLoadedAction onLoadedAction) {
         String url = getFullUrl("Usage", "");
 

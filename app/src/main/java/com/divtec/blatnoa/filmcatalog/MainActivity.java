@@ -19,6 +19,7 @@ import com.divtec.blatnoa.filmcatalog.FilmList.TitledResultAdapter;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -43,6 +44,9 @@ public class MainActivity extends AppCompatActivity {
         // Get api manager
         imdbApiManager = ImdbApiManager.createInstance(this, API_KEY);
 
+        // Set the language to device language
+        imdbApiManager.setLanguage(Locale.getDefault().getLanguage());
+
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -59,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Verify the api key
+        // Load the top 250 movies if the api key is ok
         loadTop250IfApiKeyOK();
     }
 
@@ -79,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
                         // Load the top 250 movies
                         loadTop250Movies();
                     } else {
+                        // Show an error message
                         showApiKeyErrorMessage(apiKeyInfo);
                     }
                 }

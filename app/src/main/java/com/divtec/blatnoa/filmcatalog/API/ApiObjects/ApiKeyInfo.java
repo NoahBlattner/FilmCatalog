@@ -39,6 +39,10 @@ public class ApiKeyInfo implements JsonConvertible {
         return errorMessage;
     }
 
+    /**
+     * Checks if the key has expired
+     * @return true if the key has expired
+     */
     public boolean isExpired() {
         if (getExpireDate() == null) {
             return false;
@@ -59,6 +63,10 @@ public class ApiKeyInfo implements JsonConvertible {
         return currentDate.after(expireDate);
     }
 
+    /**
+     * Checks if the key has exceeded the maximum number of requests
+     * @return true if the key has exceeded the maximum number of requests
+     */
     public boolean isExceeded() {
         return getCount() >= getMaximum();
     }
