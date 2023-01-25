@@ -1,5 +1,6 @@
 package com.divtec.blatnoa.filmcatalog.FilmList;
 
+import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 public class TitledResultAdapter extends RecyclerView.Adapter<TitledResultView> {
 
     private ArrayList<TitledResult> searchResultList = new ArrayList<>();
+    private ArrayList<Bitmap> imageList = new ArrayList<>();
 
     public TitledResultAdapter(ArrayList<TitledResult> titledResults) {
         this.searchResultList = titledResults;
