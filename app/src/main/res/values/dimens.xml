@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="txt_title_size">55sp</dimen>
+    <dimen name="txt_subtitle_size">35sp</dimen>
+    <dimen name="main_spacing">55dp</dimen>
 </resources>

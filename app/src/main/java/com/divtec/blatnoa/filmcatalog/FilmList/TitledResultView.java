@@ -45,14 +45,19 @@ public class TitledResultView extends RecyclerView.ViewHolder {
      * @param url The url of the image
      */
     public void setImage(String url) {
+        // Create a new NetworkImageLoader
         NetworkImageLoader loader = new NetworkImageLoader(url, new OnLoadedAction() {
             @Override
             public void onLoaded(Object object) {
+                // When the image data is loaded
                 Activity activity = (Activity) itemView.getContext();
+
+                // Set the image on the ui thread
                 activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         Bitmap image = (Bitmap) object;
+                        image = Bitmap.createScaledBitmap(image, 400, 600, false);
                         resultImage.setImageBitmap(image);
                     }
                 });
