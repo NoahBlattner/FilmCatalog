@@ -9,7 +9,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.divtec.blatnoa.filmcatalog.API.ApiObjects.ApiObjectBuilder;
-import com.divtec.blatnoa.filmcatalog.API.ApiObjects.Movie;
+import com.divtec.blatnoa.filmcatalog.API.ApiObjects.SearchResult;
 import com.divtec.blatnoa.filmcatalog.API.Exceptions.ApiError401Exception;
 import com.divtec.blatnoa.filmcatalog.API.Exceptions.ApiError404Exception;
 import com.divtec.blatnoa.filmcatalog.API.Exceptions.ApiError408Exception;
@@ -51,9 +51,8 @@ public class ImdbApiManager {
      * @throws UnknownApiErrorException If the api returns an unknown error
      * @throws ApiError408Exception If the api request timed out
      */
-    public void loadMovies(OnLoadedAction onLoadedAction) throws ApiError401Exception, ApiError404Exception, UnknownApiErrorException, ApiError408Exception {
-        String url = getFullUrl("SearchMovie", "");
-        // TODO find right action to get x movies
+    public void loadTop250Movies(OnLoadedAction onLoadedAction) throws ApiError401Exception, ApiError404Exception, UnknownApiErrorException, ApiError408Exception {
+        String url = getFullUrl("Top250Movies", "");
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {
@@ -62,12 +61,12 @@ public class ImdbApiManager {
                         try {
                             // Get the JSON array
                             JSONArray moviesJson = response.getJSONArray("items");
-                            ArrayList<Movie> movies = new ArrayList<>();
+                            ArrayList<SearchResult> movies = new ArrayList<>();
 
                             for (int i = 0; i < moviesJson.length(); i++) {
                                 try {
                                     // Convert each JSON object to a Movie object and add it to the list
-                                    Movie movie = ApiObjectBuilder.fromJson(moviesJson.getJSONObject(i).toString(), Movie.class);
+                                    SearchResult movie = ApiObjectBuilder.fromJson(moviesJson.getJSONObject(i).toString(), SearchResult.class);
                                     movies.add(movie);
                                 } catch (JSONException e) {
                                     e.printStackTrace();

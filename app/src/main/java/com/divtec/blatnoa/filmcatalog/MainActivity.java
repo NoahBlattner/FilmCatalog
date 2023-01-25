@@ -6,11 +6,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 
-import com.divtec.blatnoa.filmcatalog.API.ApiObjects.Movie;
+import com.divtec.blatnoa.filmcatalog.API.ApiObjects.SearchResult;
 import com.divtec.blatnoa.filmcatalog.API.Exceptions.ApiErrorException;
 import com.divtec.blatnoa.filmcatalog.API.ImdbApiManager;
 import com.divtec.blatnoa.filmcatalog.API.OnLoadedAction;
-import com.divtec.blatnoa.filmcatalog.FilmList.MovieAdapter;
+import com.divtec.blatnoa.filmcatalog.FilmList.SearchResultAdapter;
 
 import java.util.ArrayList;
 
@@ -34,12 +34,12 @@ public class MainActivity extends AppCompatActivity {
 
         // Try to load the top 250 movies
         try {
-            imdbApiManager.loadMovies(new OnLoadedAction() {
+            imdbApiManager.loadTop250Movies(new OnLoadedAction() {
                 @Override
                 public void onLoaded(Object result) {
                     // Get the list of movies
-                    ArrayList<Movie> movieList = (ArrayList<Movie>) result;
-                    MovieAdapter movieAdapter = new MovieAdapter(movieList);
+                    ArrayList<SearchResult> movieList = (ArrayList<SearchResult>) result;
+                    SearchResultAdapter movieAdapter = new SearchResultAdapter(movieList);
 
                     // Set the adapter to the recycler view
                     recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));

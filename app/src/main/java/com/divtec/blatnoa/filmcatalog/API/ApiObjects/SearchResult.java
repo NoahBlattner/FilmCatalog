@@ -1,8 +1,7 @@
 package com.divtec.blatnoa.filmcatalog.API.ApiObjects;
 
-public class Movie extends ApiObject {
+public class SearchResult extends ApiObject {
 
-    public String Id;
     public String ResultType;
     public String Image;
     public String Title;
@@ -16,7 +15,8 @@ public class Movie extends ApiObject {
      * @param title
      * @param description
      */
-    protected Movie(String id, String resultType, String image, String title, String description) {
+    protected SearchResult(String id, String resultType, String image, String title, String description) {
+        super(id);
         Id = id;
         ResultType = resultType;
         Image = image;
